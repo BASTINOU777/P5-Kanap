@@ -1,10 +1,15 @@
-//envoyer une requête HTTP de type GET 
-fetch("http://localhost:3000/api/products") 
- //promise avec function reponse pour assurer la bonne récupération de l'API products
- .then(function(res){        
-    if (res.ok){
-        return res.json()
-    }
-})
+console.log("le javascript marche")
+
+// récuperer les éléments du DOM
+let containerElt = document.querySelector("#items")
+console.log(containerElt);
+
+//récuperer les produits de l'API 
+//fetch ('http://localhost:3000/api/products').then
+
+
+
+
+
 
 
