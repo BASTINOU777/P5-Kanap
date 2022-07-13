@@ -1,47 +1,45 @@
-
 /*--------------------------------------------------------------------
-APPEL DE l'API POUR IMPORTER LES PRODUITS A LA PAGE D'ACCEUIl
+APPEL DE l'API POUR IMPORTER LES PRODUITS A LA PAGE D'ACCUEIl
 --------------------------------------------------------------*/
 
-fetch ('http://localhost:3000/api/products')
-//récuperation de la réponse pour la convertir en .JSON 
-.then (function(res){
-    if (res.ok){
-        return res.json();
+fetch("http://localhost:3000/api/products")
+  //récuperation de la réponse pour la convertir en .JSON
+  .then(function (res) {
+    if (res.ok) {
+      return res.json();
     }
-})
-.then(function(value) {
+  })
+  .then(function (value) {
     newArticles(value);
- })
+  })
 
-// Si Api est down alerte "products is not defined"
-.catch(function(error){
+  // Si Api est down alerte "products is not defined"
+  .catch(function (error) {
     alert(error);
     console.log(error);
-})
+  });
 
 /*--------------------------------------------------------
-AFFICHAGE DYNAMIQUE DES ELEMENTS DANS LA PAGE ACCEUIL
+AFFICHAGE DYNAMIQUE DES ELEMENTS DANS LA PAGE ACCUEIL
 --------------------------------------------------*/
 // récupération des éléments du DOM avec la variable container
-let container = document.querySelector('#items')
-console.log (container)
+let container = document.querySelector("#items");
+console.log(container);
 
-//--------récupération des éléments avec une boucle for of------------//
+//--------récupération des éléments avec une boucle for ------------//
 function newArticles(item) {
-// Constante pour récupere l'iD "items" (enfant du main) dans le DOM//
-    const queryItems = document.getElementById("items");
-    for (let i = 0; i < item.length; i++) {
-      const productItem =
-// récupération du code HTML contenant les articles
-        `<a href="./product.html?id=${item[i]._id}">
+  // Constante pour récupere l'iD "items" (enfant du main) dans le DOM//
+  const queryItems = document.getElementById("items");
+  for (let i = 0; i < item.length; i++) {
+    const productItem =
+      // récupération du code HTML contenant les articles
+      `<a href="./product.html?id=${item[i]._id}">
         <article>
             <img src="${item[i].imageUrl}" alt="${item[i].altTxt}">
             <h3 class="productName">${item[i].name}</h3>
             <p class="productDescription">${item[i].description}</p>  
         </article>
     </a>`;
-      queryItems.insertAdjacentHTML("beforeend", productItem);
-    }
+    queryItems.insertAdjacentHTML("beforeend", productItem);
   }
-        
+}
