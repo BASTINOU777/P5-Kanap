@@ -47,6 +47,38 @@ function product(element) {
       priceProduct.textContent = `${selectProduct.price}`;
       // id Description //
       descriptionProduct = `${selectProduct.description}`;
+
+      //Boucle for of pour chercher les différentes couleurs
+      for (let selectColors of selectProduct.colors) {
+        selectColors.innerHTML += `<option value="${selectColors}">${selectColors}</option`;
+
+        console.log("afficher les couleurs disponible du kanap");
+        console.log(selectColors);
+      }
     }
   }
 }
+/* ------------------------------------------------------------------
+                  AFFICHAGE COULEURS
+--------------------------------------------------------------*/
+let visuColor = document.querySelector("#colors");
+visuColor.addEventListener("input", (event) => {
+  let produitColor;
+
+  produitColor = event.target.value;
+
+  console.log("affichage de la couleur choisie");
+  console.log(produitColor);
+});
+
+/* ------------------------------------------------------------------
+                  AFFICHAGE QUANTITÉS
+--------------------------------------------------------------*/
+let visuQuantity = document.querySelector("#quantity");
+let produitQuantity;
+visuQuantity.addEventListener("input", (event) => {
+  produitQuantity = event.target.value;
+
+  console.log("affichage quantité choisie");
+  console.log(produitQuantity);
+});
