@@ -10,13 +10,18 @@ console.log(newID);
 //récupération des produits dans l'API grâce à la méthode fetch
 fetch("http://localhost:3000/api/products/" + newID)
   //Si Api fonction resp.ok en .json
-  .then((response) => response.json())
-  .then((objectProduct) => {
-    product(objectProduct);
+  .then((response) => {
+    return response.json();
   })
+  .then((promise) => {
+    itemsData = promise;
+    console.log(itemsData);
+  })
+
   // Si Api est down alerte "err"
-  .catch((err) => {
-    console.log(err);
+  .catch((error) => {
+    alert(error);
+    console.log(error);
   });
 /*-------------------------------------------------------------
         AFFICHAGE PRODUIT  
@@ -25,9 +30,9 @@ fetch("http://localhost:3000/api/products/" + newID)
 // fonction AFFICHAGE d'un produit
 
 function product(element) {
-  // déclaration des variables des éléments
+  // déclaration des variables des éléments du DOM
   // Image //
-  let imageProduct = docuement.querySelector(".item_img");
+  let imageProduct = document.querySelector(".item_img");
   // Titre //
   let tittleProduct = document.querySelector("#tittle");
   // Prix //
@@ -37,7 +42,7 @@ function product(element) {
   // Couleurs //
   let selectColors = document.querySelector("#colors");
 
-  //Boucle for of pour choisir un élément
+  //Boucle for of pour integrer l'id d'un élément choisi
   for (let selectProduct of product) {
     // si on récupere l'id d'un produit du tableau alors on récupére son indice pour accéder aux donnés stockés
     if (idProduct === selectProduct._id) {
@@ -91,13 +96,35 @@ visuQuantity.addEventListener("input", (event) => {
   console.log("affichage quantité choisie");
   console.log(produitQuantity);
 });
+// Attribution de la valeur minimale pour passer de 0 à 1 dans id quantity value du HTML et afficher 1 article de base
+let minArticle = document.getElementById("quantity");
+minArticle.value = 1;
+
 /* ------------------------------------------------------------------
                   AJOUT PRODUIT DANS LE PANIER
 --------------------------------------------------------------*/
-//ajout du bouton dans le DOM
-const moveToCard = document.querySelector("#addToCard");
-//écoute le bouton et envoyer tout au panier
+// envoi au panier au clik du boutton les options choisies par l'utilisateur
+let pushToBasket = (product) => {
+  button.addEventListener("clik", (event) => {
+    event.preventDefault();
 
-moveToCard.addEventListener("clik", (event) => {
-  event.preventDefault();
-});
+    if (selectColors.value == false) {
+      confirm("Veuillez sélectionner une couleur");
+    } else if (selectQuantity.value == 0) {
+      confirm("Veuillez sélectionner le nombre d'articles souhaités");
+    } else {
+      alert("Votre article a bien été ajouté au panier");
+    }
+    // Récupération des informations du produit sélectionné
+    let selectProduct = {
+      id: product._id,
+      name: product.name,
+      img: product.imageUrl,
+      altTxt: product.altTxt,
+      description: product.description,
+      color: selectColors.value,
+      quantity: parseInt(selectQuantity.value, 10),
+    };
+    console.log(selectProduct);
+  });
+};
