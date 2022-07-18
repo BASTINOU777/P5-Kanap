@@ -4,11 +4,11 @@ lien entre produit de la page d’accueil et de la page Produit
 
 // utilisation de la méthode window.location.herf pour récuperer l'url de product
 let params = new URL(window.location.href).searchParams;
-let newID = params.get("id");
-console.log(newID);
+let idProduct = params.get("id");
+console.log(idProduct);
 
 //récupération des produits dans l'API grâce à la méthode fetch
-fetch("http://localhost:3000/api/products/" + newID)
+fetch("http://localhost:3000/api/products/" + idProduct)
   //Si Api fonction resp.ok en .json
   .then((response) => {
     return response.json();
@@ -115,16 +115,25 @@ let pushToBasket = (product) => {
     } else {
       alert("Votre article a bien été ajouté au panier");
     }
-    // Récupération des informations du produit sélectionné
-    let selectProduct = {
-      id: product._id,
-      name: product.name,
-      img: product.imageUrl,
-      altTxt: product.altTxt,
-      description: product.description,
-      color: selectColors.value,
-      quantity: parseInt(selectQuantity.value, 10),
+    // Déclaration des variables contenant les produits ajouter par l'utilisateur
+    const quantityBasket = document.querySelector("#quantity");
+    const colorsBasket = document.querySelector("#colors");
+    const tittleBasket = document.querySelector("#title").textContent;
+    const priceBasket = document.querySelector("#price").textContent;
+    const linkUrl = document.location.href;
+    console.log("lien de l'url du produit");
+    console.log(linkUrl);
+
+    //on récupère les valeurs des produits du panier
+
+    let optionProduct = {
+      nom: tittleBasket,
+      id: idProduct,
+      quantity: quantityBasket.value,
+      color: colorsBasket.value,
+      url: linkUrl,
     };
-    console.log(selectProduct);
+    console.log("vérification des options du paier");
+    console.log(optionProduct);
   });
 };
