@@ -23,7 +23,6 @@ fetch(`http://localhost:3000/api/products/${productId}`)
 /*-------------------------------------------------------------
         AFFICHAGE PRODUITS
 ------------------------------------------------------*/
-
 //selection de l'iD Colors
 const selectColors = document.querySelector("#colors");
 //selection del'iD Quantity
@@ -34,13 +33,13 @@ const button = document.querySelector("#addToCart");
 //fonction qui récupère les données de ma promesse dataBase
 let selectProduct = (dataBase) => {
   //ajout des données HTML
-  document.querySelector("head > title").textContent = dataBase.title;
+  document.querySelector("head > title").textContent = dataBase.name;
   document.querySelector(
     ".item__img"
   ).innerHTML += `<img src="${dataBase.imageUrl}" alt="${dataBase.altTxt}">`;
   //ajout prix, titre et description
   document.querySelector("#price").textContent += dataBase.price;
-  document.querySelector("#title").textContent += dataBase.title;
+  document.querySelector("#title").textContent += dataBase.name;
   document.querySelector("#description").textContent += dataBase.description;
 
   //Boucle for of pour chercher les différentes couleurs ( en fonction de sa valeur et de sa clef) dans le HTML
@@ -61,7 +60,7 @@ let selectProduct = (dataBase) => {
 --------------------------------------------------------------*/
 let registerProductOnLocalStorage = (dataBase) => {
   //utilisation de la méthode addEventListener pour ajouter le clik du bouton
-  button.addEventListener("clik", (event) => {
+  button.addEventListener("click", (event) => {
     event.preventDefault();
 
     if (selectColors.value == false) {
@@ -75,13 +74,13 @@ let registerProductOnLocalStorage = (dataBase) => {
 --------------------------------------------------------------*/
       //on récupère les valeurs des produits du panier
       let selectProduct = {
-        name: dataBase.title,
+        name: dataBase.name,
         id: dataBase._id,
         img: dataBase.imageUrl,
         altTxt: dataBase.altTxt,
         description: dataBase.description,
         color: dataBase.value,
-        qantity: parseInt(selectQuantity.value, 10),
+        quantity: parseInt(selectQuantity.value, 10),
       };
       console.log(selectProduct);
 
@@ -94,27 +93,27 @@ let registerProductOnLocalStorage = (dataBase) => {
       // si il y à un produit dans le LS
       if (basket) {
         console.log("il y a des articles dans le panier,on compare les donnés");
-        //utilisation de la méthode find pour analyser les options des articles
+        //on se sert de la méthode find pour comparer les option des produits dans le LS
         let articles = basket.find(
           (articles) =>
             articles.id == selectProduct.id &&
             articles.color == selectProduct.color
         );
-        //si oui, ajout nouvelle quantité et , mise à jour du totalprice
+        //si oui, on incrémente des nouvelles quantités et on met à jour le prix total
         if (articles) {
+          articles.quantity = articles.quantity + selectProduct.quantity;
           articles.totalPrice += articles.price * selectProduct.quantity;
-          articles.totalQuantity = articles.quantity + selectProduct.quantity;
           localStorage.setItem("cart", JSON.stringify(basket));
           console.log("Quantité ajouté au panier");
           return;
         }
-        //si pas d'ajout de quantités , alors on push le prochain article dans le panier
+        //si il n'y a pas le meme article, alors on push le nouveau article dans le panier
         basket.push(selectProduct);
         localStorage.setItem("cart", JSON.stringify(basket));
-        console;
-        log("produits ajoutés au panier");
+        console.log("Le produit a été ajouté au panier");
       } // sinon création d'un tableau, et on push "selectProduct"
       else {
+        // sinon creation d'un tableau vide dans lequel on push selectProduct
         let localStorageTable = [];
         localStorageTable.push(selectProduct);
         localStorage.setItem("cart", JSON.stringify(localStorageTable));

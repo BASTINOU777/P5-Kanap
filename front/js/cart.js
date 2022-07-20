@@ -2,7 +2,7 @@
     RECUPERATION DES PRODUITS DU LOCAL STORAGE ET  DE l'API
 ---------------------------------------------------------------*/
 //déclaration de ma variable contenant le tableau des articles dans le panier
-let addProducts;
+let products = [];
 //console.log(addProducts);
 const FetchProducts = async () => {
   //attente de la promesse en allant chercher l'API avec fetch
@@ -22,9 +22,16 @@ const FetchProducts = async () => {
 };
 
 // on récup les infos dans le LS en format json
-let localStorageCart = JSON.parse(localStorage.getItem("cart"));
-//déclaration de ma variable qui récupère le numéro de commande (l'order id) du serveur
-let orderId = "";
+let addProducts = JSON.parse(localStorage.getItem("cart"));
+console.log(addProducts);
+cartProducts();
+const cartProducts = async () => {
+  if (addProducts) {
+    await addProducts;
+  }
+};
+
+for (let i = 0; i < addProducts.length; i++) {}
 
 /*-------------------------------------------------------------
         AFFICHAGES DES PRODUITS 
