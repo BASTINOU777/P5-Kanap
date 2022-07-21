@@ -1,6 +1,7 @@
 /*------------------------------------------------------------
 lien entre produit de la page d’accueil et de la page Produit
-------------------------------------------------------*/
+------------------------------------------------------------*/
+
 // utilisation de la méthode URLSearchParams pour récuperer l'iD du produit
 const getProductId = () => {
   //nous retourne l'URL
@@ -13,6 +14,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
   //Si Api fonction resp.ok en .json
   .then((response) => response.json())
   .then((dataBase) => {
+    //appel function de l'affichage des produits de l'API
     registerProductOnLocalStorage(dataBase);
     selectProduct(dataBase);
   })
@@ -20,19 +22,15 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     alert(error);
   });
 
-/*-------------------------------------------------------------
-        AFFICHAGE PRODUITS
+/*-----------------------------------------------------
+                AFFICHAGE PRODUITS
 ------------------------------------------------------*/
-//selection de l'iD Colors
-const selectColors = document.querySelector("#colors");
-//selection del'iD Quantity
-const selectQuantity = document.querySelector("#quantity");
-// ajout du bouton Ajouter au panier
-const button = document.querySelector("#addToCart");
 
-//fonction qui récupère les données de ma promesse dataBase
+//initialisation des variable dans le DOM
+const selectColors = document.querySelector("#colors");
+const selectQuantity = document.querySelector("#quantity");
+const button = document.querySelector("#addToCart");
 let selectProduct = (dataBase) => {
-  //ajout des données HTML
   document.querySelector("head > title").textContent = dataBase.name;
   document.querySelector(
     ".item__img"
@@ -58,6 +56,7 @@ let selectProduct = (dataBase) => {
 /* ------------------------------------------------------------------
                   AJOUT OBJET ET BOUTON
 --------------------------------------------------------------*/
+//function appel produits de l'API
 let registerProductOnLocalStorage = (dataBase) => {
   //utilisation de la méthode addEventListener pour ajouter le clik du bouton
   button.addEventListener("click", (event) => {
@@ -70,9 +69,9 @@ let registerProductOnLocalStorage = (dataBase) => {
     } else {
       alert("Votre article a bien été ajouté au panier");
       /* ------------------------------------------------------------------
-                  AJOUT PRODUIT DANS LE PANIER
+                  AJOUT PRODUIT DANS LE PANIER ET LOCAL STORAGE
 --------------------------------------------------------------*/
-      //on récupère les valeurs des produits du panier
+      //on récupère les valeurs des produits dans le local storage
       let selectProduct = {
         name: dataBase.name,
         id: dataBase._id,
@@ -84,16 +83,15 @@ let registerProductOnLocalStorage = (dataBase) => {
       };
       console.log(selectProduct);
 
-      /* ------------------------------------------------------------------
-                  AJOUT DU LOCAL STORAGE
---------------------------------------------------------------*/
-
-      // récupération des valeurs des produits dans le local storage , utilisation de JSON.parse pour convertir les données json du LS en éléments JS
+      // on récupère les valeurs des produits dans le local storage  et on les ajoute au panier
+      // utilisation de JSON.parse pour convertir les données json du LS en éléments JS
       let basket = JSON.parse(localStorage.getItem("cart"));
-      // si il y à un produit dans le LS
+
+      // si il y à un produit dans le panier
       if (basket) {
         console.log("il y a des articles dans le panier,on compare les donnés");
-        //on se sert de la méthode find pour comparer les option des produits dans le LS
+
+        //on se sert de la méthode find pour comparer les options des produits dans le LS
         let articles = basket.find(
           (articles) =>
             articles.id == selectProduct.id &&
