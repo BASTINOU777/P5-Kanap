@@ -24,7 +24,7 @@ function getCart() {
     /*--------------------------------------------------------------------
                   RECUPERATION DE L'API 
 ---------------------------------------------------------------------*/
-    function getCart(product) {
+    function getCart (product) {
       fetch("http://localhost:3000/api/products" + product.productId)
         //récuperation de la réponse pour la convertir en .JSON
         .then((res) => {
@@ -183,13 +183,13 @@ modifsQuantity();
 function delectProduct() {
   let deleteButton = document.querySelectorAll(".deleteItem");
 
-  for (let i = 0; i < deleteButton.length; i++) {
-    deleteButton[i].addEventListener("click", (event) => {
+  for (let j = 0; j < deleteButton.length; j += 1) {
+    deleteButton[j].addEventListener("click", (event) => {
       event.preventDefault();
 
       //Selection de l'element à supprimer en fonction de son id ET sa couleur
-      let idDelete = productLocalStorage[i].productId;
-      let colorDelete = productLocalStorage[i].productColor;
+      let idDelete = productLocalStorage[j].productId;
+      let colorDelete = productLocalStorage[j].productColor;
 
       productLocalStorage = productLocalStorage.filter(
         (el) => el.productId !== idDelete || el.couleurProduit !== colorDelete
@@ -200,7 +200,54 @@ function delectProduct() {
       //Alerte produit supprimé et refresh
       alert("Ce produit a bien été supprimé du panier");
       location.reload();
+      console.log (alert)
     });
   }
 }
+
 delectProduct();
+/*--------------------------------------------------------
+    GERER LE FORMULAIRE 
+---------------------------------------------------------*/
+//fonction du formulaire 
+function formListener ();
+// on pointe les éléments, et on leurs attibut des id 
+let form = document.querySelector (".cart__order__form");
+form.addEventListener ("submit", function (element){
+  element.preventDefault()
+  // si toutes les informations sont saisis alors récupération des informations
+  if (validChamp("firstName") && validChamp ("lastName")&& validChamp("city")&&validChamp("email")){
+    let firstNameUser = document.getElementById ("firstName").value;
+    let lastNameUser = document.getElementById ("lastName").value;
+    let addressUser = document.getElementById ("address").value;
+    let cityUser = document.getElementById ("city").value;
+    let emailUser = document.getElementById ("email").value;
+    //
+   let contact = {
+      firstName: firstNameUser,
+      lastName:lastNameUser,
+      address:addressUser,
+      city:cityUser,
+      email:emailUser,
+  };
+  // réquete POST confirmation de la commande 
+  registerContact (contact)
+  window.location.assign("confirmation.html")
+}
+});
+function validChamp(nameChamp, type) {
+  let regexFor;
+  if (type == 'email') {
+    regexFor = new RegExp (/^[a-z0-9_\-\.]+@[a-z]+\.[a-z]+$/i);
+  } else {
+regexFor = new RegExp (/^[^0-9]+$/i);
+}
+if (! regexFor.test (document.getElementById(nameChamp).value)){
+  docuement.getElementById(nameChamp + 'ErrorMsg').innerHTML='Veuillez renseigner ce champ svp';
+  return false;
+} else {
+  return true; 
+}
+}
+
+
