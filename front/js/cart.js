@@ -1,253 +1,49 @@
-/*--------------------------------------------------------------------
-        AFFICHAGE DU PANIER EN RECUPERANT LES ELEMENT DU LS 
----------------------------------------------------------------------*/
-//récupération du local storage avec la méthode getItem
-let cart = JSON.parse(localStorage.getItem("cart"));
-//récupération des élements dans le DOM
-const elementEmptyCart = document.getElementById("cat__items");
-//récupération du prix total
-let totalPrice = 0;
-//récupération des quantités total
-let totalQuantity = 0;
-//function de récupération du panier
-function getCart() {
-  // si pas d'élements et quantités et prix null ,alors le panier est vide
-  if (productLocalStorage === null || productLocalStorage == 0) {
-    //création d'un paragraphe pour annoncer à l'utilisateur que le panier est vide
-    elementEmptyCart.innerHTML = `<p>Votre panier est vide</p>`;
+function getBasket() {
+  let array = JSON.parse(localStorage.getItem("panier"));
+  if (array) {
+    return array;
   } else {
-    // sinon je regarde dans l'API si il y des éléments
-    for (let product in productLocalStorage) {
-      //appel d'une d'une fonction pour récuperer les éléments prix dans l'API
-      getArticlePrice(productLocalStorage[product]);
-    }
-    /*--------------------------------------------------------------------
-                  RECUPERATION DE L'API 
----------------------------------------------------------------------*/
-    function getCart (product) {
-      fetch("http://localhost:3000/api/products" + product.productId)
-        //récuperation de la réponse pour la convertir en .JSON
-        .then((res) => {
-          console.log(productId);
-          console.log("retour des produits de l'API");
-          //retourne la réponce en format JSON
-          return res.json();
-        })
-        .then(async function (apiElement) {
-          articles = await apiElement;
-          // si mon panier contient des élements
-          if (articles) {
-            let productPrice = 0;
-            /*--------------------------------------------------------------------
-    INSERTION DES ÉLÉMENTS DANS LE PANIER ET DES LEURS DONNÉS 
----------------------------------------------------------------------*/
-            //création des éléments "article"
-            let elementArticleCart = document.createElement("article");
-            document.getElementById("cart__items").apprendChild(productElement);
-            elementArticleCart.className = "cart__items";
-            elementArticleCart.setAttribute("data-id", product.productId);
-
-            //création des éléments "div"
-            let elementDiv = document.createElement("div");
-            elementArticleCart.appendChild(elementDiv);
-            elementDiv.className = "cart__item";
-
-            //création de l'élement
-            let elementImg = docuement.createElement("img");
-            elementDiv.appendChild(elementImg);
-            elementImg.src = product.productImg;
-            elementArticleCart.alt = product.productAlt;
-
-            //création de l'élément "div" "cart__item__content"
-            let elementItemContent = docuement.createElement("div");
-            elementArticleCart.apprendChild(elementItemContent);
-            elementItemContent;
-            className = "car__item__content";
-
-            //création de l'élément "div" "cart__item__content__description"
-            let elementItemContentTitlePrice = document.createElement("div");
-            elementItemContent.appendChild(elementItemContentTitlePrice);
-            elementItemContentTitlePrice.className =
-              "cart__item__content__description";
-
-            //création de l'élément "h2"
-            let elementTitle = document.createElement("h2");
-            elementItemContentTitlePrice.appendChild(elementTitle);
-            elementTitle.innerHTML = product.productName;
-
-            //création de l'élément "p" productColor
-            let elementColor = document.createElement("p");
-            elementItemContentTitlePrice.appendChild(elementColor);
-            elementColor.innerHTML = product.productColor;
-
-            //création de l'élément "p" price
-            let elementPrice = document.createElement("div");
-            elementItemContentTitlePrice.appendChild(elementColor);
-            elementPrice.classList.add("productPrice");
-
-            //création de l'élément "div"cart__item__content__settings
-            let elementItemContentSettings = document.createElement("div");
-            elementItemContent.appendChild(elementItemContentSettings);
-            elementItemContentSettings.className =
-              "cart__item__content__settings";
-
-            //création de l'élément "div"cart__item__content__settings__quantity
-            let elementItemContentSettingsQuantity =
-              document.createElement("div");
-            elementItemContentSettings.appendChild(
-              elementItemContentSettingsQuantity
-            );
-            elementItemContentSettingsQuantity.className =
-              "cart__item__content__settings__quantity";
-
-            //création de l'élément "p" quantity
-            let elementQuantity = document.createElement("p");
-            elementItemContentSettingsQuantity.appendChild(elementQuantity);
-            elementQuantity.innerHTML = "Quantity";
-            /*--------------------------------------------------------
-    GERER LES QUANTITES AU SEIN DU PANIER 
----------------------------------------------------------------------*/
-
-            // gérer l'envoie des quantités
-            let inputQuantity = document.createElement("input)");
-            elementItemContentSettingsQuantity.apprendChild(inputQuantity);
-            inputQuantity.type = "number";
-            inputQuantity.className = "intemQuantity";
-            inputQuantity.name = "intemQuantity";
-            inputQuantity.min = 1;
-            inputQuantity.max = 100;
-            inputQuantity.value = product.quantityProduct;
-
-            //mise à jour du total du prix
-            totalPrice = totalPrice + product.valueQuantity * elementPrice;
-            //mise à jour des quantités totales
-            totalQuantity = totalQuantity + product.valueQuantity;
-
-            //déclaration de la fonction du total du panier
-            getTotals();
-
-            //insertion de l'élement "div" "cart__item__content__settings__delete"
-            let elementItemContentSettingsDelete =
-              document.createElement("div");
-            elementItemContentSettings.appendChild(
-              elementItemContentSettingsDelete
-            );
-            elementItemContentSettingsDelete.className =
-              "cart__item__content__settings__delete";
-
-            //insertion de l'élement "p" "delete" (supprimer)
-            // Insertion de "p" supprimer
-            let elementDelete = document.createElement("p");
-            elementItemContentSettingsDelete.appendChild(elementDelete);
-            elementDelete.className = "deleteItem";
-            elementDelete.innerHTML = "Supprimer";
-          }
-        });
-    }
+    return 0;
   }
 }
-//ajout des éléments total prix et total quantité
-function elementTotals() {
-  let elementTotalQuantity = document.getElementById("totalQuantity");
-  productTotalQuantity.innerHTML = totalQuantity;
-  let elementtotalPrice = document.getElementById("totalPrice");
-  elementtotalPrice.innerHTML = totalPrice;
+const allPrices = [];
+
+//affichage des produits
+function displayProducts(product) {
+  // ici ton code pour afficher tes produits
+
+  // Pour calculer ton total dans la fonction juste en dessous
+  let total = product.price * product.quantity;
+  allPrices.push(total);
 }
-//modification des quantités des articles du panier
-function modifsQuantity() {
-  let getQuantity = document.querySelectorAll(".itemQuantity");
 
-  for (let i = 0; i < getQuantity.length; i++) {
-    getQuantity[i].addEventListener("change", (event) => {
-      event.preventDefaut();
+//calcul du total du panier
+function totalCart() {
+  const reducer = (previousValue, currentValue) => previousValue + currentValue; //gestion de tableau pour calculter le total
+  return allPrices.reduce(reducer);
+}
 
-      let quantityModif = productLocalStorage[i].valueQuantity;
-      let numberModif = getQuantity[i].valueNumber;
-      // à vérifier
-      const totalFind = productLocalStorage.find(
-        (el) => el.numberModif !== quantityModif
-      );
+//Fonction d'écoute du formulaire et methode POST vers l'api
+function listenForm() {
+  //ici ton code pour faire ton POST
+}
 
-      totalFind.valueQuantity = quantityModif;
-      productLocalStorage[i].valueQuantity = totalFind.valueQuantity;
-      localStorage.setItem("products", JSON.stringify(productLocalStorage));
-
-      location.reload();
-    });
+//IMPORTANT : Tu réunis toute tes fonction dans UNE fonction main. C'est ce que tu fais dans le langage C par exemple.
+//C'est plus organisé
+function main() {
+  let array = getBasket(); //tu récupères tes produits
+  for (i of array) {
+    //tu boucles dans ton tableau
+    displayProducts(i); //tu affiches ton article
   }
-}
-modifsQuantity();
-/*--------------------------------------------------------
-    SUPPRIMER UN PRODUIT AU SEIN DU PANIER 
----------------------------------------------------------------------*/
-function delectProduct() {
-  let deleteButton = document.querySelectorAll(".deleteItem");
+  document.querySelector(".totalCart").textContent = totalCart(); //Tu affiches ton total
+  listenForm(); // tu appelles ta fonction pour faire ton post
 
-  for (let j = 0; j < deleteButton.length; j += 1) {
-    deleteButton[j].addEventListener("click", (event) => {
-      event.preventDefault();
-
-      //Selection de l'element à supprimer en fonction de son id ET sa couleur
-      let idDelete = productLocalStorage[j].productId;
-      let colorDelete = productLocalStorage[j].productColor;
-
-      productLocalStorage = productLocalStorage.filter(
-        (el) => el.productId !== idDelete || el.couleurProduit !== colorDelete
-      );
-
-      localStorage.setItem("products", JSON.stringify(productLocalStorage));
-
-      //Alerte produit supprimé et refresh
-      alert("Ce produit a bien été supprimé du panier");
-      location.reload();
-      console.log (alert)
-    });
-  }
+  document.querySelector(".delete").addEventListener("click", function () {
+    //fonction BONUS pour vider le panier et retourner a l'accueil au cas où
+    localStorage.clear();
+    window.location.href = "index.html";
+  });
 }
 
-delectProduct();
-/*--------------------------------------------------------
-    GERER LE FORMULAIRE 
----------------------------------------------------------*/
-//fonction du formulaire 
-function formListener ();
-// on pointe les éléments, et on leurs attibut des id 
-let form = document.querySelector (".cart__order__form");
-form.addEventListener ("submit", function (element){
-  element.preventDefault()
-  // si toutes les informations sont saisis alors récupération des informations
-  if (validChamp("firstName") && validChamp ("lastName")&& validChamp("city")&&validChamp("email")){
-    let firstNameUser = document.getElementById ("firstName").value;
-    let lastNameUser = document.getElementById ("lastName").value;
-    let addressUser = document.getElementById ("address").value;
-    let cityUser = document.getElementById ("city").value;
-    let emailUser = document.getElementById ("email").value;
-    //
-   let contact = {
-      firstName: firstNameUser,
-      lastName:lastNameUser,
-      address:addressUser,
-      city:cityUser,
-      email:emailUser,
-  };
-  // réquete POST confirmation de la commande 
-  registerContact (contact)
-  window.location.assign("confirmation.html")
-}
-});
-function validChamp(nameChamp, type) {
-  let regexFor;
-  if (type == 'email') {
-    regexFor = new RegExp (/^[a-z0-9_\-\.]+@[a-z]+\.[a-z]+$/i);
-  } else {
-regexFor = new RegExp (/^[^0-9]+$/i);
-}
-if (! regexFor.test (document.getElementById(nameChamp).value)){
-  docuement.getElementById(nameChamp + 'ErrorMsg').innerHTML='Veuillez renseigner ce champ svp';
-  return false;
-} else {
-  return true; 
-}
-}
-
-
+main(); //T'appeles ton main et c'est FINI.
