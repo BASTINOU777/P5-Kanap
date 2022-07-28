@@ -92,6 +92,7 @@ let registerProductOnLocalStorage = (dataBase) => {
         console.log("il y a des articles dans le panier,on compare les donnés");
 
         //on se sert de la méthode find pour comparer les options des produits dans le LS
+        // la méthode find va permettre de chercher un produit par rapport à une condition
         let articles = basket.find(
           (articles) =>
             articles.id == selectProduct.id &&
