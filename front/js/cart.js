@@ -1,11 +1,14 @@
-//-----récupération du panier dans le LS -----//
+/* ------------------------------------------------------------------
+           récupération du panier dans le LS
+--------------------------------------------------------------*/
+
 function saveBasket(basket) {
   //sérialisation JSON (transforme es objet mon tableau( basket) en string)
-  localStorage.setItem("basket", JSON.stringify(basket));
+  localStorage.setItem("cart", JSON.stringify(basket));
 }
 //fonction panier
 function getBasket() {
-  let basket = localStorage.getItem("basket");
+  let basket = localStorage.getItem("cart");
   // si mon panier = null
   if (basket == null) {
     // je retourne un panier vide
@@ -15,50 +18,36 @@ function getBasket() {
     return JSON.parse(basket);
   }
 }
-
-//------Gestion du Formulaire-------//
-//Fonction d'écoute du formulaire et methode POST vers l'api
-function listenForm() {
-  //ici ton code pour faire ton POST
-
-  //récupération de mon boutton grace à
-  //méthode addEventListener au clik du boutton pour valider le formulaire.
-  document
-    .querySelector('#form > [type="submit"]')
-    //fonction avec la valeur qui représentera cet événement
-    .addEventListener("click", function (event) {
-      // récupération de mon formulaire sauf le submit qui m'interesse pas de vérifier
-      for (let input of document.querySelectorAll(
-        '#form > input:not([type="submit"]'
-      ));
-      {
-        inout.reportValidity();
-      }
-    });
+// function pour récupérer les article
+function displayProduct(product) {
+  let produitPanier = document.getElementById("cart__items");
+  produitPanier.innerHTML += `<article class="cart__item" data-id=${product.id} data-color=${product.color}>
+  <div class="cart__item__img">
+    <img src=${product.imageUrl} alt = ${product.altTxt}>
+  </div>
+  <div class="cart__item__content">
+    <div class="cart__item__content__description">
+      <h2>${product.name}</h2>
+      <p>${product.color}</p>
+      <p>${product.price}€</p>
+    </div>
+    <div class="cart__item__content__settings">
+      <div class="cart__item__content__settings__quantity">
+        <p>Qté : ${product.quantity}</p>
+        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="0">
+      </div>
+      <div class="cart__item__content__settings__delete">
+        <p class="deleteItem">Supprimer</p>
+      </div>
+    </div>
+  </div>
+</article>`;
+  // continuer l'articleData pour contenir toutes les données article du produit (image etc)
 }
 
-//console.log(displayProducts);
-
-//--------fonction d'ajout au panier-------------//
-function addBasket(product) {
-  //panier complet
-  let basket = getBasket();
-  //je recherche dans mon panier si il y a des produits similaire avec find (va chercher un produit par rapport à une condition)
-  let findProduct = basket.find((p) => p.id == product.id);
-  // si find ne trouve pas d'élement alors = undefined
-  if (findProduct != undefined) {
-    //j'ajoute +1 à la quantité
-    findProduct.quantity++;
-    //sinon je défini une quantité par default
-  } else {
-    product.quantity = 1;
-    // je push mon produit dans le basket (panier)
-    basket.push(product);
-  }
-  //on enregistre le nouveau panier
-  saveBasket(basket);
-}
-
+/* ------------------------------------------------------------------
+           Gestion des produits du panier
+--------------------------------------------------------------*/
 //--------fonction pour supprimer un produit du panier-------//
 function removeFrombasket(product) {
   // pour çà je prend mon panier complet
@@ -116,19 +105,45 @@ function getTotalPrice() {
   return total;
 }
 
-/*
+/* ------------------------------------------------------------------
+           Gestion du Formulaire
+--------------------------------------------------------------*/
+//Fonction d'écoute du formulaire et methode POST vers l'api
+function listenForm() {
+  //ici ton code pour faire ton POST
 
-//IMPORTANT : Tu réunis toute tes fonction dans UNE fonction main. C'est ce que tu fais dans le langage C par exemple.
-//C'est plus organisé
+  //récupération de mon boutton grace à
+  //méthode addEventListener au clik du boutton pour valider le formulaire.
+  document
+    .querySelector('#form > [type="submit"]')
+    //fonction avec la valeur qui représentera cet événement
+    .addEventListener("click", function (event) {
+      // récupération de mon formulaire sauf le submit qui m'interesse pas de vérifier
+      for (let input of document.querySelectorAll(
+        '#form > input:not([type="submit"]'
+      ));
+      {
+        inout.reportValidity();
+      }
+    });
+}
+
+//réunis toutes les fonctions dans UNE fonction main
 function main() {
-  let array = getBasket(); //tu récupères tes produits
-  for (i of array) {
-    //tu boucles dans ton tableau
-    displayProducts(i); //tu affiches ton article
-  }
-  document.querySelector(".totalCart").textContent = totalCart(); //Tu affiches ton total
-  listenForm(); // tu appelles ta fonction pour faire ton post
+  //récupèration des produits
+  let basketProducts = getBasket();
+  console.log(basketProducts);
 
+  let productsData = [];
+  //boucle for of dans le tableau
+  for (product of basketProducts) {
+    //affichage des articles
+    displayProduct(product);
+  }
+  document.querySelector("basket").textContent = basket(); //Tu affiches ton total
+  listenForm(); //appel de la fonction pour faire ma requete post
+
+  //------------ Clear mon panier et retour à l'acceuil---------------//
   document.querySelector(".delete").addEventListener("click", function () {
     //fonction BONUS pour vider le panier et retourner a l'accueil au cas où
     localStorage.clear();
@@ -136,4 +151,4 @@ function main() {
   });
 }
 
-main(); //T'appeles ton main et c'est FINI.*/
+main();
