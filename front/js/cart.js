@@ -18,10 +18,10 @@ function getBasket() {
     return JSON.parse(basket);
   }
 }
-// function pour récupérer les article
+// function pour récupérer les articles
 function displayProduct(product) {
-  let produitPanier = document.getElementById("cart__items");
-  produitPanier.innerHTML += `<article class="cart__item" data-id=${product.id} data-color=${product.color}>
+  let productBasket = document.getElementById("cart__items");
+  productBasket.innerHTML += `<article class="cart__item" data-id=${product.id} data-color=${product.color}>
   <div class="cart__item__img">
     <img src=${product.imageUrl} alt = ${product.altTxt}>
   </div>
@@ -108,25 +108,134 @@ function getTotalPrice() {
 /* ------------------------------------------------------------------
            Gestion du Formulaire
 --------------------------------------------------------------*/
-//Fonction d'écoute du formulaire et methode POST vers l'api
-function listenForm() {
-  //ici ton code pour faire ton POST
+//fonction d'ajout du formulaire
+getForm();
+function getForm() {
+  let form = document.querySelector(".cart__order__form");
+  //console.log(form);
 
-  //récupération de mon boutton grace à
-  //méthode addEventListener au clik du boutton pour valider le formulaire.
-  document
-    .querySelector('#form > [type="submit"]')
-    //fonction avec la valeur qui représentera cet événement
-    .addEventListener("click", function (event) {
-      // récupération de mon formulaire sauf le submit qui m'interesse pas de vérifier
-      for (let input of document.querySelectorAll(
-        '#form > input:not([type="submit"]'
-      ));
-      {
-        inout.reportValidity();
-      }
-    });
+  //modification du Prenom
+  form.firstName.addEventListener("change", function () {
+    validPrenom(this);
+  });
+
+  //modification du nom
+  form.lastName.addEventListener("change", function () {
+    validNom(this);
+  });
+
+  //modification de l'adresse
+  form.address.addEventListener("change", function () {
+    validAdresse(this);
+  });
+
+  //modification de la ville
+  form.city.addEventListener("change", function () {
+    validVille(this);
+  });
+
+  //modification de l'email
+  form.email.addEventListener("change", function () {
+    validEmail(this);
+  });
+
+  //Validation du prenom
+  const validPrenom = function (inputFirstName) {
+    //creation de la regExp pour la validation du prenom
+    let prenomRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
+
+    let testPrenom = prenomRegExp.test(inputFirstName.value);
+    console.log(testPrenom);
+    let firstNameErrorMsg = inputFirstName.nextElementSibling;
+    //si le prénom est renseigné alors j'envoie un message de validation
+    if (testPrenom) {
+      firstNameErrorMsg.innerHTML = "prénom rensigné";
+      // sinon il n'est pas renseigné , j'envoie une demande
+    } else {
+      firstNameErrorMsg.innerHTML = "Veuillez rentrer votre prénom";
+    }
+  };
+  //Validation du nom
+  const validNom = function (inputLastName) {
+    //creation de la regExp pour la validation du nom
+    let nomRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
+
+    let testNom = nomRegExp.test(inputLastName.value);
+    console.log(testNom);
+    let lastNameErrorMsg = inputLastName.nextElementSibling;
+    //si le nom est ok alors j'envoie un message de validation
+    if (testNom) {
+      lastNameErrorMsg.innerHTML = "Nom renseigné";
+      // sinon il n'est pas renseigné , j'envoie une demande
+    } else {
+      lastNameErrorMsg.innerHTML = "Veuillez rentrer votre Nom";
+    }
+  };
+
+  //Validation de l'adresse
+  const validAdresse = function (inputAddress) {
+    //creation de la regExp pour la validation du nom
+    let adresseRegExp = new RegExp(
+      "^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+"
+    );
+
+    let testAdresse = adresseRegExp.test(inputAddress.value);
+    console.log(testAdresse);
+    let addressErrorMsg = inputAddress.nextElementSibling;
+    //si l'adresse est ok alors j'envoie un message de validation
+    if (testAdresse) {
+      addressErrorMsg.innerHTML = "Adresse renseignée";
+      // sinon elle n'est pas renseignée , j'envoie une demande
+    } else {
+      addressErrorMsg.innerHTML = "Veuillez rentrer votre adresse";
+    }
+  };
+
+  //Validation de la ville
+  const validVille = function (inputCity) {
+    //creation de la regExp pour la validation du nom
+    let villeRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
+
+    let testVille = villeRegExp.test(inputCity.value);
+    console.log(testVille);
+    let cityErrorMsg = inputCity.nextElementSibling;
+    //si la ville est ok alors j'envoie un message de validation
+    if (testVille) {
+      cityErrorMsg.innerHTML = "Ville renseignée";
+      // sinon elle n'est pas renseignée , j'envoie une demande
+    } else {
+      cityErrorMsg.innerHTML = "Veuillez rentrer votre ville";
+    }
+  };
+
+  //Validation de l'email
+  const validEmail = function (inputEmail) {
+    //creation de la regExp pour la validation email
+    let emailRegExp = new RegExp(
+      "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
+    );
+    let testEmail = emailRegExp.test(inputEmail.value);
+    console.log(testEmail);
+    let emailErrorMsg = inputEmail.nextElementSibling;
+    //si l'adresse mail est ok alors j'envoie un message de validation
+    if (testEmail) {
+      emailErrorMsg.innerHTML = "Adresse Email renseigné";
+    } else {
+      // sinon elle n'est pas renseignée , j'envoie une demande
+      emailErrorMsg.innerHTML = "Veuillez rentrer une adresse email correct";
+    }
+  };
 }
+
+//fenêtre pop-up
+const popupConfirmation = () => {
+  if (
+    window.confirm(`Votre commande est validée
+        Pour consulter votre numéro de commande, veuillez cliquez sur OK`)
+  ) {
+    window.location.href = "confirmation.html";
+  }
+};
 
 //réunis toutes les fonctions dans UNE fonction main
 function main() {
