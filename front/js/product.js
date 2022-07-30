@@ -2,122 +2,117 @@
 lien entre produit de la page d’accueil et de la page Produit
 ------------------------------------------------------------*/
 
-// utilisation de la méthode URLSearchParams pour récuperer l'iD du produit
-const getProductId = () => {
-  //nous retourne l'URL
-  return new URL(location.href).searchParams.get("id");
-};
-const productId = getProductId();
+class Products {
+  constructor(id, name, imageUrl, description, altTxt, price, colors) {
+    this.id = id;
+    this.name = name;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.altTxt = altTxt;
+    this.price = price;
+    this.colors = colors;
+  }
+}
 
-//récupération des produits dans l'API grâce à la méthode fetch
-fetch(`http://localhost:3000/api/products/${productId}`)
-  //Si Api fonction resp.ok en .json
-  .then((response) => response.json())
-  .then((dataBase) => {
-    //appel function de l'affichage des produits de l'API
-    registerProductOnLocalStorage(dataBase);
-    selectProduct(dataBase);
+/*obtention de l'id du produit*/
+let params = new URLSearchParams(window.location.search);
+let productId = params.get("id");
+
+/*définition de l'adresse url de chaque produit grâce à l'id*/
+const productUrl = `http://localhost:3000/api/products/${productId}`;
+/*saisie des éléments à modifier dans le DOM*/
+const headTitle = document.head.getElementsByTagName("title");
+const title = document.getElementById("title");
+const price = document.getElementById("price");
+const description = document.getElementById("description");
+const img = document.getElementsByClassName("item__img");
+const colorsId = document.getElementById("colors");
+
+/*affichage de la page produit grâce à l'adresse Url*/
+fetch(productUrl)
+  .then(function (response) {
+    return response.json();
   })
-  .catch((error) => {
-    alert(error);
+  /*Création d'une fonction pour afficher les détails du produit et d'une fonction pour l'ajouter au panier */
+  .then(function (data) {
+    productCart(data);
+    productPages(data);
   });
 
-/*-----------------------------------------------------
-                AFFICHAGE PRODUITS
-------------------------------------------------------*/
-
-//initialisation des variable dans le DOM
-const selectColors = document.querySelector("#colors");
-const selectQuantity = document.querySelector("#quantity");
-const button = document.querySelector("#addToCart");
-let selectProduct = (dataBase) => {
-  document.querySelector("head > title").textContent = dataBase.name;
-  document.querySelector(
-    ".item__img"
-  ).innerHTML += `<img src="${dataBase.imageUrl}" alt="${dataBase.altTxt}">`;
-  //ajout prix, titre et description
-  document.querySelector("#price").textContent += dataBase.price;
-  document.querySelector("#title").textContent += dataBase.name;
-  document.querySelector("#description").textContent += dataBase.description;
-
-  //Boucle for of pour chercher les différentes couleurs ( en fonction de sa valeur et de sa clef) dans le HTML
-  for (let color of dataBase.colors) {
-    //création d'un élément "option"
-    let option = document.createElement("option");
-    // option de couleurs en fonction des valeurs
-    option.innerHTML = `${color}`;
-    option.value = `${color}`;
-    selectColors.appendChild(option);
-
-    console.log("afficher les couleurs disponible du kanap");
-    console.log(option);
+/*affichage des éléments de la page produit*/
+function productPages(data) {
+  headTitle[0].innerHTML = data.name;
+  title.innerHTML = data.name;
+  price.innerHTML = data.price;
+  description.innerHTML = data.description;
+  img[0].innerHTML += `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
+  colorsId.innerHTML += `
+  <option>${data.colors[0]}</option>
+  <option>${data.colors[1]}</option>
+  `;
+  if (data.colors.length === 3) {
+    colorsId.innerHTML += `
+      <option>${data.colors[2]}</option>
+      `;
+  } else if (data.colors.length === 4) {
+    colorsId.innerHTML += `
+      <option>${data.colors[3]}</option>
+  `;
   }
-};
-/* ------------------------------------------------------------------
-                  AJOUT OBJET ET BOUTON
---------------------------------------------------------------*/
-//function appel produits de l'API
-let registerProductOnLocalStorage = (dataBase) => {
-  //utilisation de la méthode addEventListener pour ajouter le clik du bouton
-  button.addEventListener("click", (event) => {
-    event.preventDefault();
+}
 
-    if (selectColors.value == false) {
-      confirm("Veuillez selectionner une couleur");
-    } else if (selectQuantity.value == 0) {
-      confirm("Veuillez sélectionner le nombre d'articles souhaités");
-    } else {
-      alert("Votre article a bien été ajouté au panier");
-      /* ------------------------------------------------------------------
-                  AJOUT PRODUIT DANS LE PANIER ET LOCAL STORAGE
---------------------------------------------------------------*/
-      //on récupère les valeurs des produits dans le local storage
-      let selectProduct = {
-        name: dataBase.name,
-        id: dataBase._id,
-        img: dataBase.imageUrl,
-        altTxt: dataBase.altTxt,
-        description: dataBase.description,
-        color: dataBase.value,
-        quantity: parseInt(selectQuantity.value, 10),
-      };
-      console.log(selectProduct);
+/*Ajout du produit et ses informations au panier avec la fonction productCart*/
+function productCart(data) {
+  let cartButton = document.getElementById("addToCart");
 
-      // on récupère les valeurs des produits dans le local storage  et on les ajoute au panier
-      // utilisation de JSON.parse pour convertir les données json du LS en éléments JS
-      let basket = JSON.parse(localStorage.getItem("cart"));
+  /*Création du tableau localCart pour sauvegarder les produits du panier*/
+  localCart = localStorage.getItem("cart");
+  if (localCart === null) {
+    localCart = [];
+    localStorage.setItem("cart", JSON.stringify(localCart));
+  }
+  localCart = localStorage.getItem("cart");
+  localCart = JSON.parse(localCart);
 
-      // si il y à un produit dans le panier
-      if (basket) {
-        console.log("il y a des articles dans le panier,on compare les donnés");
+  /*Ecoute du bouton "Ajouter au Panier"*/
+  cartButton.addEventListener("click", () => {
+    let quantities = document.getElementById("quantity");
+    let colorsOption = document.getElementById("colors");
 
-        //on se sert de la méthode find pour comparer les options des produits dans le LS
-        // la méthode find va permettre de chercher un produit par rapport à une condition
-        let articles = basket.find(
-          (articles) =>
-            articles.id == selectProduct.id &&
-            articles.color == selectProduct.color
-        );
-        //si oui, on incrémente des nouvelles quantités et on met à jour le prix total
-        if (articles) {
-          articles.quantity = articles.quantity + selectProduct.quantity;
-          articles.totalPrice += articles.price * selectProduct.quantity;
-          localStorage.setItem("cart", JSON.stringify(basket));
-          console.log("Quantité ajouté au panier");
-          return;
-        }
-        //si il n'y a pas le meme article, alors on push le nouveau article dans le panier
-        basket.push(selectProduct);
-        localStorage.setItem("cart", JSON.stringify(basket));
-        console.log("Le produit a été ajouté au panier");
-      } // sinon création d'un tableau, et on push "selectProduct"
-      else {
-        // sinon creation d'un tableau vide dans lequel on push selectProduct
-        let localStorageTable = [];
-        localStorageTable.push(selectProduct);
-        localStorage.setItem("cart", JSON.stringify(localStorageTable));
-        console.log("panier vide, veuillez ajouté un article");
+    /*Création de l'objet newProduct qui contient les informations du produit ajouté au panier*/
+    let newProduct = {
+      productId,
+      productName: data.name,
+      productImg: data.imageUrl,
+      productDescription: data.description,
+      productTxt: data.altTxt,
+      productPrice: data.price,
+      productColors: colorsOption.value,
+      productQuantity: quantities.value,
+    };
+
+    let verif = quantities.value > 0 && quantities.value < 101;
+    /*Création de la condition pour gérer l'ajout d'un produit ayant la même couleur et le même id au panier pour augmenter seulement la quantité*/
+    if (colorsOption.value != "" && verif) {
+      const alreadyIn = localCart.find(
+        (obj) =>
+          obj.productId === newProduct.productId &&
+          obj.productColors === newProduct.productColors
+      );
+      if (alreadyIn) {
+        let fixQuantity =
+          parseInt(newProduct.productQuantity) +
+          parseInt(alreadyIn.productQuantity);
+        alreadyIn.productQuantity = fixQuantity;
+        localStorage.setItem("canap", JSON.stringify(localCart));
+        alert("Produit ajouté au panier");
+      } else {
+        localCart.push(newProduct);
+        localStorage.setItem("canap", JSON.stringify(localCart));
+        alert("Produit ajouté au panier");
       }
+    } else {
+      alert("Veuillez choisir une couleur/ une quantité");
     }
   });
-};
+}
