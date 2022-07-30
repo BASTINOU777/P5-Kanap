@@ -28,18 +28,23 @@ const description = document.getElementById("description");
 const img = document.getElementsByClassName("item__img");
 const colorsId = document.getElementById("colors");
 
-/*affichage de la page produit grâce à l'adresse Url*/
+//---affichage de la page produit grâce à l'adresse Url---//
 fetch(productUrl)
   .then(function (response) {
+    //récupération de ma response en format json
     return response.json();
   })
-  /*Création d'une fonction pour afficher les détails du produit et d'une fonction pour l'ajouter au panier */
+  //Création d'une fonction pour afficher les détails du produit et d'une fonction pour l'ajouter au panier
   .then(function (data) {
+    console.log(data);
+    console.log(productCart);
     productCart(data);
+    console.log(data);
     productPages(data);
+    console.log(productPages);
   });
 
-/*affichage des éléments de la page produit*/
+//------affichage des éléments de la page produit-------//
 function productPages(data) {
   headTitle[0].innerHTML = data.name;
   title.innerHTML = data.name;
@@ -67,8 +72,11 @@ function productCart(data) {
 
   /*Création du tableau localCart pour sauvegarder les produits du panier*/
   localCart = localStorage.getItem("cart");
+  //si mon ls est vide
   if (localCart === null) {
+    //mon lS est un tableau
     localCart = [];
+    //envoie des produits JSON
     localStorage.setItem("cart", JSON.stringify(localCart));
   }
   localCart = localStorage.getItem("cart");

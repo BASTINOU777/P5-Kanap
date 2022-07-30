@@ -1,15 +1,14 @@
 /*-----------------------------------------------------
                 AFFICHAGE PRODUITS
 ------------------------------------------------------*/
+
+const orderNumber = document.getElementById("orderId");
+
 // récupération de l'url de orderID
-const urlOrderId = new URL(window.location.herf);
-console.log(urlOrderId);
-
+const param = new URL(document.location).searchParams;
 // récupération de orderid
-const orderId = url.searchParams.get("orderId");
-console.log(orderId);
+const orderId = param.get("orderId");
 
-const confirmationOrderId = docuement.getElementById("orderId");
-confirmationOrderId.innerHTML = orderId;
+orderNumber.textContent = orderId;
 
 localStorage.clear();

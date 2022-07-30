@@ -1,261 +1,266 @@
-/* ------------------------------------------------------------------
-           récupération du panier dans le LS
---------------------------------------------------------------*/
+/*Récupération des produits enregistrés dans le localStorage*/
+let productCart = localStorage.getItem("canap");
+productCart = JSON.parse(productCart);
 
-function saveBasket(basket) {
-  //sérialisation JSON (transforme es objet mon tableau( basket) en string)
-  localStorage.setItem("cart", JSON.stringify(basket));
+/*Création d'un tableau pour afficher les produits ajoutés dans le panier*/
+let recapProduct = document.getElementById("cart__items");
+let cartArray = [];
+
+/*Création de la condition pour vérifier si le panier est vide*/
+if (productCart == 0 || productCart === null) {
+  const quantityTotal = document.getElementById("totalQuantity");
+  quantityTotal.innerHTML = "0";
+  const priceTotal = document.getElementById("totalPrice");
+  priceTotal.innerHTML = "0";
+  alert("Le panier est vide");
+  /*Affichage du panier si un produit est présent dans le localStorage*/
+} else {
+  for (let product in productCart) {
+    /*Insertion de l'élément "article"*/
+    let cartArticle = document.createElement("article");
+    document.querySelector("#cart__items").appendChild(cartArticle);
+    cartArticle.className = "cart__item";
+    cartArticle.setAttribute("data-id", productCart[product].productId);
+
+    /*Insertion d'une div pour l'image*/
+    let cartDivImg = document.createElement("div");
+    cartArticle.appendChild(cartDivImg);
+    cartDivImg.className = "cart__item__img";
+
+    /*Insertion de l'image*/
+    let cartImg = document.createElement("img");
+    cartDivImg.appendChild(cartImg);
+    cartImg.src = productCart[product].productImg;
+    cartImg.alt = productCart[product].productTxt;
+
+    /*Insertion d'une div pour le contenu texte*/
+    let cartItemContent = document.createElement("div");
+    cartArticle.appendChild(cartItemContent);
+    cartItemContent.className = "cart__item__content";
+
+    /*Insertion d'une div pour le titre et le prix*/
+    let titlePrice = document.createElement("div");
+    cartItemContent.appendChild(titlePrice);
+    titlePrice.className = "cart__item__content__titlePrice";
+
+    /*Insertion d'un titre h2 pour le nom du produit*/
+    let productTitle = document.createElement("h2");
+    titlePrice.appendChild(productTitle);
+    productTitle.innerHTML = productCart[product].productName;
+
+    /*Insertion d'un paragraphe pour la couleur*/
+    let productColor = document.createElement("p");
+    productTitle.appendChild(productColor);
+    productColor.innerHTML = productCart[product].productColors;
+    productColor.style.fontSize = "20px";
+
+    /*Insertion d'un paragraphe pour le prix*/
+    let productCartPrice = document.createElement("p");
+    titlePrice.appendChild(productCartPrice);
+    productCartPrice.innerHTML = productCart[product].productPrice + " €";
+
+    /*Insertion d'une div pour les éléments de modification*/
+    let contentSettings = document.createElement("div");
+    cartItemContent.appendChild(contentSettings);
+    contentSettings.className = "cart__item__content__settings";
+
+    /*Insertion d'une div pour modifier la quantité*/
+    let settingsQuantity = document.createElement("div");
+    contentSettings.appendChild(settingsQuantity);
+    settingsQuantity.className = "cart__item__content__settings__quantity";
+
+    /*Insertion d'une div pour afficher la quantité*/
+    let productQty = document.createElement("p");
+    settingsQuantity.appendChild(productQty);
+    productQty.innerHTML = "Qté : ";
+
+    /*Insertion de la quantité*/
+    let productQuantities = document.createElement("input");
+    settingsQuantity.appendChild(productQuantities);
+    productQuantities.value = productCart[product].productQuantity;
+    productQuantities.className = "itemQuantity";
+    productQuantities.setAttribute("type", "number");
+    productQuantities.setAttribute("min", "1");
+    productQuantities.setAttribute("max", "100");
+    productQuantities.setAttribute("name", "itemQuantity");
+
+    /*Insertion d'une div pour supprimer un produit*/
+    let deleteItem = document.createElement("div");
+    contentSettings.appendChild(deleteItem);
+    deleteItem.className = "cart__item__content__settings__delete";
+
+    /*Insertion du bouton supprimer*/
+    let deleteItemP = document.createElement("p");
+    deleteItem.appendChild(deleteItemP);
+    deleteItemP.className = "deleteItem";
+    deleteItemP.innerHTML = "Supprimer";
+  }
 }
-//fonction panier
-function getBasket() {
-  let basket = localStorage.getItem("cart");
-  // si mon panier = null
-  if (basket == null) {
-    // je retourne un panier vide
-    return [];
-    // sinon je retourne ma string en objet dans mon panier
+
+/*Création de la fonctionnalité supprimer pour supprimer un produit directement dans le panier*/
+let deleteProduct = Array.from(document.querySelectorAll(".deleteItem"));
+for (let j = 0; j < deleteProduct.length; j++)
+  [
+    deleteProduct[j].addEventListener("click", (event) => {
+      event.preventDefault();
+
+      let idToDelete = productCart[j].productId && productCart[j].productColors;
+
+      productCart = productCart.filter(
+        (obj) => obj.productId && obj.productColors !== idToDelete
+      );
+
+      localStorage.setItem("canap", JSON.stringify(productCart));
+
+      alert("Le produit a été supprimé");
+
+      window.location.href = "cart.html";
+    }),
+  ];
+
+/*Création de la fonctionnalité pour modifier la quantité  directement dans le panier*/
+let selectQuantity = Array.from(document.querySelectorAll(".itemQuantity"));
+for (let k = 0; k < selectQuantity.length; k++)
+  [
+    selectQuantity[k].addEventListener("change", () => {
+      productCart[k].productQuantity = parseInt(selectQuantity[k].value);
+
+      localStorage.setItem("canap", JSON.stringify(productCart));
+
+      window.location.href = "cart.html";
+    }),
+  ];
+
+/*Calcul du prix total du panier en fonction de la quantité et des prix des produits*/
+let totalPrice = [];
+for (let l = 0; l < productCart.length; l++) {
+  let cartPrice = productCart[l].productQuantity * productCart[l].productPrice;
+
+  totalPrice.push(cartPrice);
+}
+const addition = (accumulator, currentValue) => accumulator + currentValue;
+const finalCartPrice = totalPrice.reduce(addition, 0);
+const totalHtml = document.getElementById("totalPrice");
+totalHtml.innerHTML = finalCartPrice;
+
+let totalQuantity = [];
+for (let m = 0; m < productCart.length; m++) {
+  let cartQuantity = parseInt(productCart[m].productQuantity);
+
+  totalQuantity.push(cartQuantity);
+}
+const finalCartQuantity = totalQuantity.reduce(addition);
+const totalProductHtml = document.getElementById("totalQuantity");
+totalProductHtml.innerHTML = finalCartQuantity;
+
+/*Création d'expression régulières pour controler les entrées des utilisateurs dans le formulaire*/
+const regExpName = /[A-Z][a-zéèêàçï-]+$/;
+const regExpadress = /[0-9]+\s[a-z]+\s[a-zéèêçàï\s\-]+$/;
+const regExpEmail = /[a-z0-9\.\-\_]+@[a-z]+\.[a-z]{2,3}$/;
+
+const firstName = document.getElementById("firstName");
+const lastName = document.getElementById("lastName");
+const address = document.getElementById("address");
+const city = document.getElementById("city");
+const email = document.getElementById("email");
+
+/*Ecoute de chaque input du formulaire pour controler si l'utilisateur respecte bien le champ indiqué
+Enregistrement des entrées dans le tableau info*/
+firstName.addEventListener("input", (event) => {
+  event.preventDefault();
+  if (regExpName.test(firstName.value) === false || firstName.value === "") {
+    document.getElementById("firstNameErrorMsg").innerHTML = "Entrée invalide";
   } else {
-    return JSON.parse(basket);
+    document.getElementById("firstNameErrorMsg").innerHTML = "";
   }
-}
-// function pour récupérer les articles
-function displayProduct(product) {
-  let productBasket = document.getElementById("cart__items");
-  productBasket.innerHTML += `<article class="cart__item" data-id=${product.id} data-color=${product.color}>
-  <div class="cart__item__img">
-    <img src=${product.imageUrl} alt = ${product.altTxt}>
-  </div>
-  <div class="cart__item__content">
-    <div class="cart__item__content__description">
-      <h2>${product.name}</h2>
-      <p>${product.color}</p>
-      <p>${product.price}€</p>
-    </div>
-    <div class="cart__item__content__settings">
-      <div class="cart__item__content__settings__quantity">
-        <p>Qté : ${product.quantity}</p>
-        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="0">
-      </div>
-      <div class="cart__item__content__settings__delete">
-        <p class="deleteItem">Supprimer</p>
-      </div>
-    </div>
-  </div>
-</article>`;
-}
-
-/* ------------------------------------------------------------------
-           Gestion des produits du panier
---------------------------------------------------------------*/
-//--------fonction pour supprimer un produit du panier-------//
-function removeFrombasket(product) {
-  // pour çà je prend mon panier complet
-  let basket = getBasket();
-  //j'utilise la méthode filter pour filtrer mon tableau (basket) et retirer l'id qui n'a pas la valeur product
-  basket = basket.filter((p) => p.id != product.id);
-  //je retire un produit
-  saveBasket(basket);
-}
-function changeQuantity(product, quantity) {
-  let basket = getBasket();
-  //je recherche dans mon panier un produit
-  let findProduct = basket.find((p) => p.id == product.id);
-  // si le produit est trouver, je change sa quantité
-  if (findProduct != undefined) {
-    findProduct.quantity += quantity;
-    // si la quantité du produit est de zéro
-    if (findProduct.quantity <= 0) {
-      //je supprime mon produit du panier
-      removeFrombasket(findProduct);
-    } else {
-      //sinon on enregistre si le produit à été supprimer
-      saveBasket(basket);
-    }
+});
+lastName.addEventListener("input", (event) => {
+  event.preventDefault();
+  if (regExpName.test(lastName.value) === false || lastName.value === "") {
+    document.getElementById("lastNameErrorMsg").innerHTML = "Entrée invalide";
+  } else {
+    document.getElementById("lastNameErrorMsg").innerHTML = "";
   }
-}
-
-//-----Gestion de la quantité du panier--------//
-//fonction de récupération de la quantité du panier
-function getNumberProduct() {
-  //je récupère mon panier
-  let basket = getBasket();
-  // mon nombre égal 0
-  let number = 0;
-  // je fais une boucle for of pour parcourir mon panier
-  for (let product of basket) {
-    //
-    number += product.quantity;
+});
+address.addEventListener("input", (event) => {
+  event.preventDefault();
+  if (regExpadress.test(address.value) === false || address.value === "") {
+    document.getElementById("addressErrorMsg").innerHTML = "Entrée invalide";
+  } else {
+    document.getElementById("addressErrorMsg").innerHTML = "";
   }
-  //je retourne la quantité
-  return number;
-}
-
-//------Gestion des prix du panier------------//
-//fonction de récupération du prix total du panier
-function getTotalPrice() {
-  //je récupère mon panier
-  let basket = getBasket();
-  let total = 0;
-  // je fais une boucle for of pour parcourir mon panier
-  for (let product of basket) {
-    total += product.quantity * product.price;
+});
+city.addEventListener("input", (event) => {
+  event.preventDefault();
+  if (regExpName.test(city.value) === false || city.value === "") {
+    document.getElementById("cityErrorMsg").innerHTML = "Entrée invalide";
+  } else {
+    document.getElementById("cityErrorMsg").innerHTML = "";
   }
-  //je retourne la quantité
-  return total;
-}
+});
+email.addEventListener("input", (event) => {
+  event.preventDefault();
+  if (regExpEmail.test(email.value) === false || email.value === "") {
+    document.getElementById("emailErrorMsg").innerHTML = "Entrée invalide";
+  } else {
+    document.getElementById("emailErrorMsg").innerHTML = "";
+  }
+});
 
-/* ------------------------------------------------------------------
-           Gestion du Formulaire
---------------------------------------------------------------*/
-//fonction d'ajout du formulaire
-getForm();
-function getForm() {
-  let form = document.querySelector(".cart__order__form");
-  //console.log(form);
-
-  //modification du Prenom
-  form.firstName.addEventListener("change", function () {
-    validPrenom(this);
-  });
-
-  //modification du nom
-  form.lastName.addEventListener("change", function () {
-    validNom(this);
-  });
-
-  //modification de l'adresse
-  form.address.addEventListener("change", function () {
-    validAdresse(this);
-  });
-
-  //modification de la ville
-  form.city.addEventListener("change", function () {
-    validVille(this);
-  });
-
-  //modification de l'email
-  form.email.addEventListener("change", function () {
-    validEmail(this);
-  });
-
-  //Validation du prenom
-  const validPrenom = function (inputFirstName) {
-    //creation de la regExp pour la validation du prenom
-    let prenomRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-
-    let testPrenom = prenomRegExp.test(inputFirstName.value);
-    console.log(testPrenom);
-    let firstNameErrorMsg = inputFirstName.nextElementSibling;
-    //si le prénom est renseigné alors j'envoie un message de validation
-    if (testPrenom) {
-      firstNameErrorMsg.innerHTML = "prénom rensigné";
-      // sinon il n'est pas renseigné , j'envoie une demande
-    } else {
-      firstNameErrorMsg.innerHTML = "Veuillez rentrer votre prénom";
-    }
+/*Ecoute du bouton "Commander" pour passer la commande*/
+let orderBtn = document.getElementById("order");
+orderBtn.addEventListener("click", (event) => {
+  event.preventDefault();
+  /*Création de l'objet newContact pour enregistré les infos du formualire*/
+  let contact = {
+    firstName: firstName.value,
+    lastName: lastName.value,
+    address: address.value,
+    city: city.value,
+    email: email.value,
   };
-  //Validation du nom
-  const validNom = function (inputLastName) {
-    //creation de la regExp pour la validation du nom
-    let nomRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-
-    let testNom = nomRegExp.test(inputLastName.value);
-    console.log(testNom);
-    let lastNameErrorMsg = inputLastName.nextElementSibling;
-    //si le nom est ok alors j'envoie un message de validation
-    if (testNom) {
-      lastNameErrorMsg.innerHTML = "Nom renseigné";
-      // sinon il n'est pas renseigné , j'envoie une demande
-    } else {
-      lastNameErrorMsg.innerHTML = "Veuillez rentrer votre Nom";
-    }
-  };
-
-  //Validation de l'adresse
-  const validAdresse = function (inputAddress) {
-    //creation de la regExp pour la validation du nom
-    let adresseRegExp = new RegExp(
-      "^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+"
-    );
-
-    let testAdresse = adresseRegExp.test(inputAddress.value);
-    console.log(testAdresse);
-    let addressErrorMsg = inputAddress.nextElementSibling;
-    //si l'adresse est ok alors j'envoie un message de validation
-    if (testAdresse) {
-      addressErrorMsg.innerHTML = "Adresse renseignée";
-      // sinon elle n'est pas renseignée , j'envoie une demande
-    } else {
-      addressErrorMsg.innerHTML = "Veuillez rentrer votre adresse";
-    }
-  };
-
-  //Validation de la ville
-  const validVille = function (inputCity) {
-    //creation de la regExp pour la validation du nom
-    let villeRegExp = new RegExp("^[a-zA-Z ,.'-]+$");
-
-    let testVille = villeRegExp.test(inputCity.value);
-    console.log(testVille);
-    let cityErrorMsg = inputCity.nextElementSibling;
-    //si la ville est ok alors j'envoie un message de validation
-    if (testVille) {
-      cityErrorMsg.innerHTML = "Ville renseignée";
-      // sinon elle n'est pas renseignée , j'envoie une demande
-    } else {
-      cityErrorMsg.innerHTML = "Veuillez rentrer votre ville";
-    }
-  };
-
-  //Validation de l'email
-  const validEmail = function (inputEmail) {
-    //creation de la regExp pour la validation email
-    let emailRegExp = new RegExp(
-      "^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$"
-    );
-    let testEmail = emailRegExp.test(inputEmail.value);
-    console.log(testEmail);
-    let emailErrorMsg = inputEmail.nextElementSibling;
-    //si l'adresse mail est ok alors j'envoie un message de validation
-    if (testEmail) {
-      emailErrorMsg.innerHTML = "Adresse Email renseigné";
-    } else {
-      // sinon elle n'est pas renseignée , j'envoie une demande
-      emailErrorMsg.innerHTML = "Veuillez rentrer une adresse email correct";
-    }
-  };
-}
-
-//fenêtre pop-up
-const popupConfirmation = () => {
+  /*Création condition pour véririfer que toutes les entrées du formulaire sont remplies*/
   if (
-    window.confirm(`Votre commande est validée
-        Pour consulter votre numéro de commande, veuillez cliquez sur OK`)
+    regExpName.test(firstName.value) === false ||
+    regExpName.test(lastName.value) === false ||
+    regExpadress.test(address.value) === false ||
+    regExpName.test(city.value) === false ||
+    regExpEmail.test(email.value) === false
   ) {
-    window.location.href = "confirmation.html";
+    alert("Formulaire incorrect");
+  } else if (
+    firstName.value === "" ||
+    lastName.value === "" ||
+    address.value === "" ||
+    city.value === "" ||
+    email.value === ""
+  ) {
+    alert("Formulaire incomplet");
+  } else {
+    /*Transmission des id des produits présents dans le panier en les enregistrant dans le tableau items*/
+    let products = [];
+    productCart.forEach((orderBtn) => {
+      products.push(orderBtn.productId);
+    });
+    /*Création variable contenant les infos du formulaire et les id des produits du panier*/
+    let sendOrder = { contact, products };
+    console.log(sendOrder);
+    /*Création d'une requête pour envoyer les données au serveur*/
+    fetch(`http://localhost:3000/api/products/order`, {
+      method: "POST",
+      body: JSON.stringify(sendOrder),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      /*Récupération de la réponse du serveur*/
+      .then((res) => {
+        return res.json();
+      })
+      .then((content) => {
+        window.location.href =
+          "../html/confirmation.html?orderId=" + content.orderId;
+      });
   }
-};
-/* ------------------------------------------------------------------
-           Gestion du Main
---------------------------------------------------------------
-//réunis toutes les fonctions dans UNE fonction main
-function main() {
-  //récupèration des produits
-  let productsData = [];
-  //boucle for of dans le tableau
-  for (product of productsData) {
-    //affichage des articles
-    displayProduct(product);
-  }
-  //document.querySelector(".").textContent = (); //Tu affiches ton total
-  //listenForm(); //appel de la fonction pour faire ma requete post
-
-  //------------ Clear mon panier et retour à l'acceuil---------------//
-  //document.querySelector(".delete").addEventListener("click", function () {
-  //fonction BONUS pour vider le panier et retourner a l'accueil au cas où
-  //localStorage.clear();
-  // window.location.href = "index.html";
-  //});
-}
-
-main();*/
+});
