@@ -42,7 +42,6 @@ function displayProduct(product) {
     </div>
   </div>
 </article>`;
-  // continuer l'articleData pour contenir toutes les données article du produit (image etc)
 }
 
 /* ------------------------------------------------------------------
@@ -236,28 +235,27 @@ const popupConfirmation = () => {
     window.location.href = "confirmation.html";
   }
 };
-
+/* ------------------------------------------------------------------
+           Gestion du Main
+--------------------------------------------------------------
 //réunis toutes les fonctions dans UNE fonction main
 function main() {
   //récupèration des produits
-  let basketProducts = getBasket();
-  console.log(basketProducts);
-
   let productsData = [];
   //boucle for of dans le tableau
-  for (product of basketProducts) {
+  for (product of productsData) {
     //affichage des articles
     displayProduct(product);
   }
-  document.querySelector("basket").textContent = basket(); //Tu affiches ton total
-  listenForm(); //appel de la fonction pour faire ma requete post
+  //document.querySelector(".").textContent = (); //Tu affiches ton total
+  //listenForm(); //appel de la fonction pour faire ma requete post
 
   //------------ Clear mon panier et retour à l'acceuil---------------//
-  document.querySelector(".delete").addEventListener("click", function () {
-    //fonction BONUS pour vider le panier et retourner a l'accueil au cas où
-    localStorage.clear();
-    window.location.href = "index.html";
-  });
+  //document.querySelector(".delete").addEventListener("click", function () {
+  //fonction BONUS pour vider le panier et retourner a l'accueil au cas où
+  //localStorage.clear();
+  // window.location.href = "index.html";
+  //});
 }
 
-main();
+main();*/
