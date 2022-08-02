@@ -112,11 +112,11 @@ function productCart(data) {
           parseInt(newProduct.productQuantity) +
           parseInt(alreadyIn.productQuantity);
         alreadyIn.productQuantity = fixQuantity;
-        localStorage.setItem("canap", JSON.stringify(localCart));
+        localStorage.setItem("cart", JSON.stringify(localCart));
         alert("Produit ajouté au panier");
       } else {
         localCart.push(newProduct);
-        localStorage.setItem("canap", JSON.stringify(localCart));
+        localStorage.setItem("cart", JSON.stringify(localCart));
         alert("Produit ajouté au panier");
       }
     } else {

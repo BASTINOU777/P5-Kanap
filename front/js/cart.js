@@ -1,5 +1,5 @@
 /*Récupération des produits enregistrés dans le localStorage*/
-let productCart = localStorage.getItem("canap");
+let productCart = localStorage.getItem("cart");
 productCart = JSON.parse(productCart);
 
 /*Création d'un tableau pour afficher les produits ajoutés dans le panier*/
@@ -110,7 +110,7 @@ for (let j = 0; j < deleteProduct.length; j++)
         (obj) => obj.productId && obj.productColors !== idToDelete
       );
 
-      localStorage.setItem("canap", JSON.stringify(productCart));
+      localStorage.setItem("cart", JSON.stringify(productCart));
 
       alert("Le produit a été supprimé");
 
@@ -125,7 +125,7 @@ for (let k = 0; k < selectQuantity.length; k++)
     selectQuantity[k].addEventListener("change", () => {
       productCart[k].productQuantity = parseInt(selectQuantity[k].value);
 
-      localStorage.setItem("canap", JSON.stringify(productCart));
+      localStorage.setItem("cart", JSON.stringify(productCart));
 
       window.location.href = "cart.html";
     }),
