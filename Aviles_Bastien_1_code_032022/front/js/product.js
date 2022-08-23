@@ -2,7 +2,7 @@
 lien entre produit de la page d’accueil et de la page Produit
 ------------------------------------------------------------*/
 
-/* recupère la valeur de l'id du lien */
+/* récupèration de la valeur de l'id du lien */
 let idProduit = new URL(location.href).searchParams.get("id");
 
 (async function () {
@@ -10,7 +10,7 @@ let idProduit = new URL(location.href).searchParams.get("id");
   addProductToProductPage(product);
 })();
 
-//récupération des données d'un produit depuis l'api
+/* récupération des données d'un produit depuis l'api */ 
 async function getProduct() {
   return fetch("http://localhost:3000/api/products/" + idProduit)
     .then(function (res) {
@@ -26,7 +26,7 @@ async function getProduct() {
     });
 }
 
-//insertion d'un produit et ses détails dans la page produit
+/* insertion d'un produit et ses détails dans la page produit */ 
 function addProductToProductPage(product) {
   let imageProduct = document.createElement("img");
   imageProduct.alt = product.altTxt;
@@ -38,7 +38,7 @@ function addProductToProductPage(product) {
 
   let colorsProduct = product.colors;
   let i = 0;
-  //on boucle tant que le nombre de couleurs est disponible
+  /* on boucle tant que le nombre de couleurs est disponible */ 
   while (i < colorsProduct.length) {
     let color = document.createElement("option");
     color.innerText = colorsProduct[i];
@@ -55,7 +55,7 @@ function addProductToProductPage(product) {
   document.getElementById("description").innerText = descrisptionProduct;
 }
 
-/***** Ajout d'un produit au panier *****/
+//----- Ajout d'un produit au panier ------//
 
 let addToCart = document.getElementById("addToCart");
 let cart = [];

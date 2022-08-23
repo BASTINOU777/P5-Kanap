@@ -328,5 +328,55 @@ function validOrder() {
       event.stopPropagation();
     });
 }
-/* on valide la commande */
+/* appel de la fonction pour valider la commande */
 validOrder();
+
+/* Validation de la commande */
+function sendOrder() {
+  let submitOrder = document.querySelector(".cart__order__form");
+  submitOrder.addEventListener("submit", function (event) {
+    if (cart.length > 0 && errorsInput.length === 0) {
+      // génère l'objet contact à envoyer à l'API
+      let contact = new contactInfo(
+        firstName.value,
+        lastName.value,
+        address.value,
+        city.value,
+        email.value
+      );
+
+      // génération de l'ID des produits dans le panier
+      let products = [];
+      for (let i = 0; i < cart.length; i++) {
+        products.push(cart[i].id);
+      }
+
+      // La requête POST pour envoyer la commande
+      fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ contact, products }),
+      })
+        .then(function (res) {
+          if (res.ok) {
+            return res.json();
+          }
+        })
+        .then(function (value) {
+          localStorage.clear();
+          let idOrder = value.orderId;
+          document.location.href =
+            "../html/confirmation.html" + "?id=" + idOrder;
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+    event.preventDefault();
+  });
+}
+
+sendOrder();

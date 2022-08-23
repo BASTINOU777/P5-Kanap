@@ -1,7 +1,7 @@
 /*--------------------------------------------------------------------
 APPEL DE l'API POUR IMPORTER LES PRODUITS A LA PAGE D'ACCUEIl
 --------------------------------------------------------------*/
-/* déclaration de la fonction asyncrone "products" qui nous permettra de récupérer tous les produits */
+/* déclaration de la fonction asyncrone "products" qui nous permettra de récupérer tous les produits dans l'api */
 (async function () {
   const products = await getProducts();
   addProductsToHome(products);
@@ -23,12 +23,12 @@ function getProducts() {
     });
 }
 
-/*ajout des produits a la page d'accueil*/
+/* Ajout des produits à la page d'accueil*/
 function addProductsToHome(products) {
   let i = 0;
   /* récupèration de tous mes produits au dessus de 0 */
   while (i < products.length) {
-    //ajout des id dans les liens des produits
+    /* ajout des id dans les liens des produits */
     let lienProduct = document.createElement("a");
     lienProduct.href = "./product.html" + "?id=" + products[i]._id;
 
