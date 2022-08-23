@@ -117,6 +117,7 @@ for (let i = 0; i < cart.length; i++) {
       }
     })
     .then(function (product) {
+      /* appel de la fonction du prix d'un seul produit */ 
       let priceOneProduct = parseInt(product.price);
       let totalPriceOneProduit = priceOneProduct * quantityOneProduct;
 
