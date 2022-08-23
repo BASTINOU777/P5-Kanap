@@ -1,52 +1,62 @@
 /*--------------------------------------------------------------------
 APPEL DE l'API POUR IMPORTER LES PRODUITS A LA PAGE D'ACCUEIl
 --------------------------------------------------------------*/
+/* déclaration de la fonction asyncrone "products" qui nous permettra de récupérer tous les produits */
+(async function () {
+  const products = await getProducts();
+  addProductsToHome(products);
+})();
 
-productDisplay();
-
-/*importation du contenu de l'api*/
-async function getProduct() {
-  var api = await fetch("http://localhost:3000/api/products");
-  return await api.json();
-}
-
-/*création d'une fonction afin d'afficher tous les produits de l'api dans la page d'accueil*/
-async function productDisplay() {
-  var res = await getProduct()
-    .then(function (data) {
-      const products = data;
-      for (let product in products) {
-        /*insertion d'un lien vers le produit*/
-        let productLink = document.createElement("a");
-        document.querySelector(".items").appendChild(productLink);
-        productLink.href = `product.html?id=${data[product]._id}`;
-
-        /*insertion d'un article pour contenir le produit*/
-        let productArticle = document.createElement("article");
-        productLink.appendChild(productArticle);
-
-        /*insertion de l'image du produit et de sa description*/
-        let productImg = document.createElement("img");
-        productArticle.appendChild(productImg);
-        productImg.src = data[product].imageUrl;
-        productImg.alt = data[product].altTxt;
-
-        /*insertion du nom du produit*/
-        let productName = document.createElement("h3");
-        productArticle.appendChild(productName);
-        productName.classList.add("productName");
-        productName.innerHTML = data[product].name;
-
-        /*insertion de la descrption du produit*/
-        let productDescription = document.createElement("p");
-        productArticle.appendChild(productDescription);
-        productDescription.classList.add("productName");
-        productDescription.innerHTML = data[product].description;
+/*importation des données de l'api*/
+function getProducts() {
+  return fetch("http://localhost:3000/api/products")
+    .then(function (res) {
+      if (res.ok) {
+        return res.json();
       }
     })
-    // Si Api est down alerte "products is not defined"
+    .then(function (products) {
+      return products;
+    })
     .catch(function (error) {
-      return error;
-      console.log(error);
+      alert(error);
     });
+}
+
+/*ajout des produits a la page d'accueil*/
+function addProductsToHome(products) {
+  let i = 0;
+  /* récupèration de tous mes produits au dessus de 0 */
+  while (i < products.length) {
+    //ajout des id dans les liens des produits
+    let lienProduct = document.createElement("a");
+    lienProduct.href = "./product.html" + "?id=" + products[i]._id;
+
+    let contentProduct = document.createElement("article");
+
+    /* récuperation des URL des produits */
+    let imageProduct = document.createElement("img");
+    imageProduct.alt = products[i].altTxt;
+    imageProduct.src = products[i].imageUrl;
+
+    /* récuperation des noms des produits */
+    let nomProduct = document.createElement("h3");
+    nomProduct.classList.add("productName");
+    nomProduct.innerText = products[i].name;
+
+    /* récuperation des descriptions des produits */
+    let descrisptionProduct = document.createElement("p");
+    descrisptionProduct.classList.add("productDescription");
+    descrisptionProduct.innerText = products[i].description;
+
+    document
+      .getElementById("items")
+      .appendChild(lienProduct)
+      .appendChild(contentProduct);
+
+    contentProduct.appendChild(imageProduct);
+    contentProduct.appendChild(nomProduct);
+    contentProduct.appendChild(descrisptionProduct);
+    i++;
+  }
 }

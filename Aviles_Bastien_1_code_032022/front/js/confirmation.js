@@ -2,13 +2,10 @@
                 AFFICHAGE PRODUITS
 ------------------------------------------------------*/
 
-const orderNumber = document.getElementById("orderId");
+/* récupération du numéro de commande dans l'url de la page */
+const url = new URL(window.location.href);
+const id = url.searchParams.get("id");
 
-// récupération de l'url de orderID
-const param = new URL(document.location).searchParams;
-// récupération de orderid
-const orderId = param.get("orderId");
-
-orderNumber.textContent = orderId;
-
-localStorage.clear();
+/* affichage du numéro de commande */
+const orderId = document.getElementById("orderId");
+orderId.textContent = id;
