@@ -200,7 +200,7 @@ for (let i = 0; i < cart.length; i++) {
 
 //--------- Gestion du Formulaire de contact -----------------//
 
-/* Expressions régulières Regex */
+/* Expressions régulières Regexp */
 const regExpText = /^[A-Za-zÀ-ÖØ-öø-ÿ\-\'\ ]{2,30}$/;
 const regExpAddress = /^[0-9A-Za-zÀ-ÖØ-öø-ÿ\-\'\ ]{5,30}$/;
 const regExpEmail = /\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b/i;

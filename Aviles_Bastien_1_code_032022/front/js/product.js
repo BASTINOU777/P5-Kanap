@@ -198,7 +198,7 @@ function pressAddToCart(
     let colorSelect = getColor.value;
 
     /* on vérifie que la bonne couleur soit selectionnée, sinon on affiche un message d'erreur */
-    if (colorSelect === "--SVP, choisissez une couleur --") {
+    if (colorSelect == false) {
       displayMessageErrorColor();
       return false;
     }
